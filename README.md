@@ -131,11 +131,16 @@ ausente es un error de programación, no un cero silencioso.
 - `withVariableString("x", "abc")` lanza `EvaluationException`; nunca se filtra un
   `NumberFormatException` de la API pública.
 
-## Diagrama del pipeline
+## Diagramas
 
-`docs/diagrams/pipeline-evaluacion.html` documenta el recorrido completo
-(`FormulaEvaluator` → `Lexer` → `Parser`/AST → `Evaluator`) y los errores que puede
-emitir cada etapa. Ábrelo en el navegador; es autónomo y no necesita servidor.
+Ambos son autónomos: se abren en el navegador y no necesitan servidor.
+
+- `docs/diagrams/pipeline-evaluacion.html` documenta el recorrido completo
+  (`FormulaEvaluator` → `Lexer` → `Parser`/AST → `Evaluator`) y los errores que puede
+  emitir cada etapa.
+- `docs/diagrams/uso-evaluador.html` muestra cómo se usa la API: añadir variables,
+  evaluar una expresión y qué ocurre al pedir una variable inexistente. Traza la
+  llamada paso a paso y ofrece tres vistas guiadas (variables, expresión, errores).
 
 ## Requisitos
 
@@ -204,7 +209,9 @@ src/
 
 docs/diagrams/
 ├── pipeline-evaluacion.workflow.json # Fuente del diagrama (Archify v2)
-└── pipeline-evaluacion.html          # Diagrama interactivo autónomo
+├── pipeline-evaluacion.html          # Diagrama interactivo autónomo
+├── uso-evaluador.sequence.json       # Fuente del diagrama (Archify v1)
+└── uso-evaluador.html                # Diagrama interactivo autónomo
 ```
 
 ## Tests

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Cómo usar el evaluador de fórmulas",
+    "output": "docs/diagrams/uso-evaluador.html",
+    "viewBox": [1040, 520],
+    "animation": "trace",
+    "column_fit": "spread",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "vars",
+        "label": "1. Variables",
+        "focus": ["app", "ev"],
+        "note": "Los métodos withVariable* devuelven la misma instancia, y por eso se pueden encadenar."
+      },
+      {
+        "id": "expr",
+        "label": "2. Expresión",
+        "focus": ["app", "ev", "parser", "evald"],
+        "note": "evaluate delega en Parser y luego en Evaluator, y el resultado vuelve por la misma llamada."
+      },
+      {
+        "id": "err",
+        "label": "3. Errores",
+        "focus": ["app", "ev"],
+        "note": "Una variable con valor null se evalúa como 0, pero getVariable lanza si la variable no existe."
+      }
+    ]
+  },
+  "participants": [
+    { "id": "app", "type": "external", "label": "Tu código", "sublabel": "llamador" },
+    { "id": "ev", "type": "backend", "label": "FormulaEvaluator", "sublabel": "API fluida" },
+    { "id": "parser", "type": "backend", "label": "Parser", "sublabel": "parse() estático" },
+    { "id": "evald", "type": "backend", "label": "Evaluator", "sublabel": "visita del AST" }
+  ],
+  "segments": [
+    { "from": 148, "to": 244, "label": "Añadir variables" },
+    { "from": 254, "to": 380, "label": "Evaluar la expresión" },
+    { "from": 386, "to": 460, "label": "Consultar y errores" }
+  ],
+  "messages": [
+    { "id": "new-evaluator", "from": "app", "to": "ev", "y": 163, "label": "new FormulaEvaluator()", "variant": "default" },
+    { "id": "var-number", "from": "app", "to": "ev", "y": 196, "label": ".withVariableNumber(\"x\", 10.0)", "variant": "emphasis" },
+    { "id": "var-string", "from": "app", "to": "ev", "y": 229, "label": ".withVariableString(\"y\", \"5.0\")", "variant": "emphasis" },
+    { "id": "evaluate-call", "from": "app", "to": "ev", "y": 272, "label": ".evaluate(\"(x + y) * 2\")", "variant": "emphasis" },
+    { "id": "parse-call", "from": "ev", "to": "parser", "y": 303, "label": "parse(\"(x + y) * 2\")", "variant": "default" },
+    { "id": "ast-eval", "from": "ev", "to": "evald", "y": 334, "label": "evaluate(nodo, variables)", "variant": "default" },
+    { "id": "evaluate-return", "from": "ev", "to": "app", "y": 365, "label": "30.0", "variant": "return" },
+    { "id": "missing-var", "from": "app", "to": "ev", "y": 402, "label": "getVariable(\"z\") sin definir", "variant": "dashed" },
+    { "id": "missing-error", "from": "ev", "to": "app", "y": 433, "label": "EvaluationException", "variant": "dashed" }
+  ],
+  "activations": [
+    { "participant": "ev", "from": 158, "to": 442, "type": "backend" },
+    { "participant": "parser", "from": 298, "to": 340, "type": "backend" },
+    { "participant": "evald", "from": 329, "to": 372, "type": "backend" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "API fluida",
+      "items": [
+        "new FormulaEvaluator().withVariableNumber(\"x\", 10.0).withVariableString(\"y\", \"5.0\").evaluate(\"(x + y) * 2\") devuelve 30.0",
+        "withVariable* devuelve la misma instancia, así que los métodos se encadenan."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Errores frecuentes",
+      "items": [
+        "withVariableString(\"x\", \"abc\") lanza EvaluationException, nunca NumberFormatException.",
+        "Variable no definida: EvaluationException. Valor null: se evalúa como 0."
+      ]
+    }
+  ]
+}
