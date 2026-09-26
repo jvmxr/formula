@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Pipeline de evaluación de fórmulas",
+    "output": "docs/diagrams/pipeline-evaluacion.html",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "api", "label": "API pública (FormulaEvaluator)" },
+    { "id": "nucleo", "label": "Núcleo de parsing y evaluación" },
+    { "id": "errores", "label": "Errores (unchecked)", "variant": "exception" }
+  ],
+  "mainPath": ["entrada", "validar", "lexear", "parsear", "evaluar", "resultado"],
+  "semanticChecks": {
+    "allowedRoots": ["entrada"],
+    "allowedTerminals": ["resultado", "err_parse", "err_eval"],
+    "requiredPaths": [{ "from": "entrada", "to": "resultado" }]
+  },
+  "nodes": [
+    { "id": "entrada", "lane": "api", "col": 0, "type": "external", "label": "Fórmula", "sublabel": "String y variables", "tag": "API pública" },
+    { "id": "validar", "lane": "api", "col": 1, "type": "security", "label": "Validar", "sublabel": "null o vacío", "tag": "obligatorio" },
+    { "id": "lexear", "lane": "nucleo", "col": 2, "type": "backend", "label": "Lexer", "sublabel": "String → List<Token>" },
+    { "id": "parsear", "lane": "nucleo", "col": 3, "type": "backend", "label": "Parser", "sublabel": "descendente recursivo" },
+    { "id": "evaluar", "lane": "nucleo", "col": 4, "type": "backend", "label": "Evaluator", "sublabel": "Visitor sobre el AST" },
+    { "id": "resultado", "lane": "api", "col": 5, "type": "external", "label": "Resultado", "sublabel": "double" },
+    { "id": "err_parse", "lane": "errores", "col": 3, "type": "security", "label": "ParseException", "sublabel": "token inesperado" },
+    { "id": "err_eval", "lane": "errores", "col": 4, "width": 148, "type": "security", "label": "EvaluationException", "sublabel": "variable o división 0" }
+  ],
+  "edges": [
+    { "from": "entrada", "to": "validar" },
+    { "from": "validar", "to": "lexear" },
+    { "from": "lexear", "to": "parsear" },
+    { "from": "parsear", "to": "evaluar", "label": "AST ExpressionNode" },
+    { "from": "evaluar", "to": "resultado" },
+    { "from": "parsear", "to": "err_parse", "variant": "security", "role": "error" },
+    { "from": "evaluar", "to": "err_eval", "variant": "security", "role": "error" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Errores",
+      "items": [
+        "ParseException y EvaluationException extienden RuntimeException",
+        "ParseException añade la posición del error en la expresión"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Paridad con JavaScript",
+      "items": [
+        "Los tests comparan cada resultado contra Nashorn en JDK 8",
+        "-2 ** 2 se evalúa como (-2) ** 2, a diferencia de JS"
+      ]
+    }
+  ]
+}

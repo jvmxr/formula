@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.systam'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+// Nashorn (usado por NashornComparator para verificar paridad con JavaScript) se elimino
+// en JDK 15, asi que tanto la compilacion como los tests deben ejecutarse sobre JDK 8.
+// Un toolchain deja que Gradle localice el JDK instalado en lugar de fijar una ruta
+// absoluta que solo funciona en una maquina concreta.
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
