@@ -1,0 +1,18 @@
+# Normaliza los finales de linea: todo se guarda y se trabaja en LF, y solo
+# los scripts de Windows vuelven como CRLF.
+#
+# Sin esto, ficheros versionados en CRLF producen diffs ruidosos en cuanto
+# alguien contribuciona desde Linux o macOS. Ademas, gradlew es un script de
+# shell y no se ejecuta en Unix si llega con CRLF.
+#
+# Nota: core.autocrlf=true llega de la configuracion de sistema de Git for
+# Windows, asi que las reglas eol de este fichero son necesarias para
+# sobreescribirla de forma explicita.
+
+* text=auto eol=lf
+
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+*.png binary
+*.jar binary
